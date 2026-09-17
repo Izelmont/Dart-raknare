@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dart-räknare</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;padding:16px;background:#f2f2f2;color:#111}
+.app{max-width:500px;margin:auto;background:white;padding:16px;border-radius:18px}
+h1{text-align:center;margin:5px 0 15px}
+.score{text-align:center;font-size:36px;font-weight:bold;margin:10px}
+.darts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.dart{border:1px solid #ccc;border-radius:10px;padding:8px;text-align:center}
+.dart small{display:block;color:#777}
+.mult{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.numbers{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+button{min-height:52px;border:1px solid #ccc;border-radius:10px;background:#fafafa;font-size:18px;font-weight:bold}
+button:active{background:#ddd}
+.selected{background:#ddd}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🎯 Dart-räknare</h1>
+
+<div id="score" class="score">0</div>
+
+<div class="darts">
+<div class="dart"><small>Pil 1</small><span id="d1">–</span></div>
+<div class="dart"><small>Pil 2</small><span id="d2">–</span></div>
+<div class="dart"><small>Pil 3</small><span id="d3">–</span></div>
+</div>
+
+<div class="mult">
+<button onclick="setMult(1)" id="s">Singel</button>
+<button onclick="setMult(2)" id="d">Dubbel</button>
+<button onclick="setMult(3)" id="t">Trippel</button>
+</div>
+
+<div class="numbers">
+<button onclick="add(20)">20</button>
+<button onclick="add(19)">19</button>
+<button onclick="add(18)">18</button>
+<button onclick="add(17)">17</button>
+<button onclick="add(16)">16</button>
+
+<button onclick="add(15)">15</button>
+<button onclick="add(14)">14</button>
+<button onclick="add(13)">13</button>
+<button onclick="add(12)">12</button>
+<button onclick="add(11)">11</button>
+
+<button onclick="add(10)">10</button>
+<button onclick="add(9)">9</button>
+<button onclick="add(8)">8</button>
+<button onclick="add(7)">7</button>
+<button onclick="add(6)">6</button>
+
+<button onclick="add(5)">5</button>
+<button onclick="add(4)">4</button>
+<button onclick="add(3)">3</button>
+<button onclick="add(2)">2</button>
+<button onclick="add(1)">1</button>
+
+<button onclick="addSpecial(25)">Bull 25</button>
+<button onclick="addSpecial(50)">Bull 50</button>
+<button onclick="addSpecial(0)">Miss</button>
+</div>
+
+<div class="bottom">
+<button onclick="undo()">↩ Ångra</button>
+<button onclick="reset()">Ny runda</button>
+</div>
+</div>
+
+<script>
+let mult=1;
+let darts=[];
+
+function setMult(m){
+ mult=m;
+ document.querySelectorAll('.mult button').forEach(b=>b.classList.remove('selected'));
+ document.getElementById(m===1?'s':m===2?'d':'t').classList.add('selected');
+}
+
+function add(n){
+ if(darts.length>=3)return;
+ let value=n*mult;
+ let label=(mult===1?'S':mult===2?'D':'T')+n;
+ darts.push({value,label});
+ mult=1;
+ render();
+}
+
+function addSpecial(n){
+ if(darts.length>=3)return;
+ darts.push({value:n,label:n===50?'Bull 50':n===25?'Bull 25':'Miss'});
+ render();
+}
+
+function undo(){
+ darts.pop();
+ render();
+}
+
+function reset(){
+ darts=[];
+ mult=1;
+ render();
+}
+
+function render(){
+ document.getElementById('score').textContent=darts.reduce((a,b)=>a+b.value,0);
+ for(let i=1;i<=3;i++)
+   document.getElementById('d'+i).textContent=darts[i-1]?darts[i-1].label:'–';
+ document.querySelectorAll('.mult button').forEach(b=>b.classList.remove('selected'));
+ document.getElementById('s').classList.add('selected');
+}
+render();
+</script>
+</body>
+</html>
